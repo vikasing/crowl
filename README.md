@@ -11,9 +11,10 @@ Has a limited capability of crawling RSS/ATOM feeds and storing them in MongoDB.
 How To Get Started
 ==================
 Get the code and test it using following code:
-public class Test {
 
-  /**
+```java
+public class Test {
+	/**
 	 * @param args
 	 */
 	public static void main(String[] args){
@@ -32,7 +33,7 @@ public class Test {
                 for(FeedEntry fe: feed)
                 {                
                     SyndEntry se = fe.getFeedEntry();                            
-                    System.out.println("Title: "+se.getTitle()+"\n"+"Content: "+fe.getNoHtmlContent()+"\n"+"Image URL: "+fe.getFeedImageUrls());
+                    System.out.println("Title: "+se.getTitle()+"\n"+"Content: "+fe.getNoHtmlContent()+"\n");
                 }
             }            
 	    }
@@ -41,3 +42,5 @@ public class Test {
 	    }
     }
 }
+```
+
