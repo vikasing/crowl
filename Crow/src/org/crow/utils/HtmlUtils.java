@@ -3,12 +3,13 @@
  */
 package org.crow.utils;
 
-import java.awt.Dimension;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -93,39 +94,56 @@ public class HtmlUtils {
 	public String getCleanTextFromHTML(String html) throws MalformedURLException, BoilerpipeProcessingException
 	{
 	    // NOTE: Use ArticleExtractor unless DefaultExtractor gives better results for you
-	    String text = ArticleSentencesExtractor.INSTANCE.getText(html);
-        return text;
+	     
+        return ArticleSentencesExtractor.INSTANCE.getText(html);
 	}
 	public String getContentFromURL(String url) throws MalformedURLException, BoilerpipeProcessingException
 	{
 		Document document;
         String text = null;
-
 		try {
-			document = Jsoup.connect(url).timeout(60000).get();
+			document = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko/20120330 Firefox/11.0").timeout(60000).get();
 		    text = ArticleSentencesExtractor.INSTANCE.getText(document.body().toString());
-		    //System.out.println(text);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
 		return text;
 	}
-	public List<String> getURLsFromHTML(String URL) throws IOException{
-	    List<String> urlList = new ArrayList<String>();
-	    Document doc = Jsoup.connect(URL).get();
-	        Elements links = doc.select("a[href]");
-	        for (Element link : links) {
-	            urlList.add(link.attr("abs:href"));
-	        }
-            return urlList; 
+	public Set<String> getURLsFromHTML(String URL) throws IOException{
+	    Set<String> urlSet = new HashSet<String>();
+	    Document doc = Jsoup.connect(URL).userAgent("Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko/20120330 Firefox/11.0").timeout(60000).get();
+        Elements links = doc.select("a[href]");
+        for (Element link : links) {
+            urlSet.add(link.attr("abs:href"));
+        }
+        return urlSet; 
 	  }
-	public List<String> getURLsFromHTML(Document doc) throws IOException{
-            List<String> urlList = new ArrayList<String>();
-                Elements links = doc.select("a[href]");
-                for (Element link : links) {
-                    urlList.add(link.attr("abs:href"));
-                }
-            return urlList; 
-          }
+	public Set<String> getURLsFromHTML(Document doc) throws IOException{
+        Set<String> urlSet = new HashSet<String>();
+        Elements links = doc.select("a[href]");
+        for (Element link : links) {
+        	urlSet.add(link.attr("abs:href"));
+        }
+        return urlSet; 
+    }
+	
+	public String getFeedURL(String url) {
+		String fURL = null;
+		try {
+			//System.out.println("main url "+url);
+			Document document = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko/20120330 Firefox/11.0").timeout(60000).get();
+			Elements urls = document.head().getAllElements();
+			for (Element element : urls) {
+				Element fElement = element.getElementsByAttributeValue("type", "application/rss+xml").get(0);
+				if(fElement!=null) {
+					fURL =  fElement.attr("href").toString();
+					break;
+				}
+			}
+
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		return fURL;
+	}
 }

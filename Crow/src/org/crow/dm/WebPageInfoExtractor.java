@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.crow.classes.WebDocument;
 import org.crow.utils.HtmlUtils;
@@ -32,7 +33,7 @@ public class WebPageInfoExtractor
         Date date = Calendar.getInstance().getTime();
         String content = htmlUtils.getCleanTextFromHTML(webPageURL.toString());
         String domain = webPageURL.getHost();
-        List<String> allLinksList = htmlUtils.getURLsFromHTML(doc);
+        Set<String> allLinksList = htmlUtils.getURLsFromHTML(doc);
         List<String> innerLinksList = new ArrayList<String>();
         List<String> outerLinksList = new ArrayList<String>();
 
