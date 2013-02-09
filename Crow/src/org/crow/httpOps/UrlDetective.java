@@ -32,9 +32,9 @@ public class UrlDetective {
 
 	public UrlType determineUrlType(String url) {
 		String contentType = "";
-		ArrayList<String> urls = new ArrayList<String>();
+		//List<String> urls = new ArrayList<String>();
 		HttpHeadersAnalysis httpHeaderAnalysis = new HttpHeadersAnalysis();
-		DBUtils gUrls = new DBUtils();
+		//DBUtils gUrls = new DBUtils();
 		//urls = gUrls.getAllUrls();
 		urlBase.setUrlAddress(url);
 		UrlType utype=null;
@@ -45,17 +45,19 @@ public class UrlDetective {
 		// {
 		try {
 			URL passedUrl = new URL(url);
-			boolean alreadyConnected = false;
-			boolean isCrawlingAllowed = analyzeRobotsDotText(passedUrl);
+			//boolean alreadyConnected = false;
+			//boolean isCrawlingAllowed = analyzeRobotsDotText(passedUrl);
 			urlBase.setHeaders(httpHeaderAnalysis.getHttpHeaders(passedUrl));
 			contentType = urlBase.getHeaders().getContentType();
-			if (contentType.contains("html")) {
+			if (contentType!=null && contentType.contains("html")) {
 				utype = UrlType.HTML;
 			} 
-			else if (contentType.contains("xml")) {
+			else if (contentType!=null && contentType.contains("xml")) {
+				XmlReader xmlReader =null;
 				try {
 					SyndFeedInput input = new SyndFeedInput();
-					SyndFeed feed = input.build(new XmlReader(passedUrl));
+					xmlReader = new XmlReader(passedUrl);
+					SyndFeed feed = input.build(xmlReader);
 					String feedtype = feed.getFeedType();
 					if (feedtype.contains("rss")) {
 						utype = UrlType.RSS;
@@ -67,11 +69,14 @@ public class UrlDetective {
 					utype = UrlType.NO_SYND_XML;
 					e.printStackTrace();
 				}
+				finally {
+					xmlReader.close();
+				}
 			} 
-			else {
+/*				else {
 				// TODO for images, plain text, different doc types etc.
 			}
-			if (isCrawlingAllowed && utype!=null) {
+		if (isCrawlingAllowed && utype!=null) {
 				if(utype.equals(UrlType.HTML))
 				{
 					// TODO send to HrefGrabber 
@@ -85,8 +90,9 @@ public class UrlDetective {
 				}
 			} else {
 				// TODO put the url in future vault.
-			}
+			}*/
 		} catch (Exception e) {
+			utype = UrlType.NON_URL;
 			e.printStackTrace();
 		}
         return utype;

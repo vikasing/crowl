@@ -7,6 +7,9 @@ package org.crow.base;
  * @author viksin
  * This class uses ROME library to parse the feeds.	
  */
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,17 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.crow.classes.FeedEntry;
-import org.crow.httpOps.HttpHeadersAnalysis;
 import org.crow.utils.GenUtils;
 import org.crow.utils.HtmlUtils;
 
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.fetcher.FeedFetcher;
-import com.sun.syndication.fetcher.impl.FeedFetcherCache;
-import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
-import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
 import com.sun.syndication.io.SyndFeedInput;
 
 
@@ -41,10 +39,15 @@ public class FeedParser {
 		//String imageThumbWidth=genUtils.getPropertyValue("imageWidth");
 		//String imageThumbHeight=genUtils.getPropertyValue("imageHeight");
 		System.out.println("Parsing URL: "+feedUrl.toString() +" at "+Calendar.getInstance().getTime());
+		InputStream urlInputStream = null;
+		InputStreamReader iStreamReader = null;
 		try {
-			FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
-			FeedFetcher fetcher = new HttpURLFeedFetcher(feedInfoCache);
-			SyndFeed feed = fetcher.retrieveFeed(feedUrl);			
+			//FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
+			//FeedFetcher fetcher = new HttpURLFeedFetcher(feedInfoCache);
+			SyndFeedInput input = new SyndFeedInput();
+			urlInputStream = feedUrl.openStream();
+			iStreamReader = new InputStreamReader(urlInputStream);
+			SyndFeed feed = input.build(iStreamReader);
 			//URLConnection uc = feedUrl.openConnection();
 			
 			//uc.setConnectTimeout(120000);
@@ -66,22 +69,23 @@ public class FeedParser {
                 fe.setSourceLink(feedUrl.toString());
                 fe.setSourceTitle(feedSourceTitle);
                 fe.setFeedEntry(se);
+                //fe.setCompleteContent(htmlUtils.getContentFromURL(se.getLink()));
                 if (se.getContents().size() > 0) {
                     Iterator<?> contents = se.getContents().iterator();
                     while (contents.hasNext()) {
                         SyndContent content = (SyndContent) contents.next();
                         sbuff.append(content.getValue());
                     }
-                    //fe.setNoHtmlContent(htmlUtils.removeHtmlTags(sbuff.toString()));
+                    fe.setNoHtmlContent(htmlUtils.getCleanTextFromHTML(sbuff.toString()));
                     fe.setFeedImageUrls(htmlUtils.getImgUrls(sbuff.toString()));
-                    fe.setCompleteContent(htmlUtils.getCleanTextFromHTML(sbuff.toString()));
                 }
                 else if (se.getDescription() != null) {
-                    //fe.setNoHtmlContent(htmlUtils.removeHtmlTags(se.getDescription().getValue()));
                     fe.setFeedImageUrls(htmlUtils.getImgUrls(se.getDescription().getValue()));
-                    fe.setCompleteContent(htmlUtils.getCleanTextFromHTML(se.getDescription().getValue()));
+                    fe.setNoHtmlContent(htmlUtils.getCleanTextFromHTML(se.getDescription().getValue()));
                 }
-
+                if (fe.getNoHtmlContent().length()<300) {
+                	fe.setNoHtmlContent(htmlUtils.getContentFromURL(se.getLink()));
+				}
                 // fe.setLastModDateOnServer(httpHeaders.getLastModified());
                 fe.setFeedGetDateTime(Calendar.getInstance().getTime());
                 fe.setFeedHashid(genUtils.generateSHAHashId(se.getLink()));
@@ -101,8 +105,16 @@ public class FeedParser {
                 feedList.add(fe);
             }		
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			System.out.println("ERROR: " + ex.getMessage()+" in " +feedUrl.toString());
+			ex.printStackTrace();
+		}
+		finally {
+			try {
+				iStreamReader.close();
+				urlInputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return (ArrayList<FeedEntry>) feedList;
 	}

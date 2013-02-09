@@ -12,5 +12,6 @@ public enum UrlType {
 	NO_SYND_XML,
 	RSS,
 	ATOM,
-	PODCAST
+	PODCAST,
+	NON_URL
 }

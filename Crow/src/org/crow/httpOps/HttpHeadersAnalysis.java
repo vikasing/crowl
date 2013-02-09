@@ -37,6 +37,8 @@ public class HttpHeadersAnalysis {
 			} catch (IOException e) {
 			e.printStackTrace();
 		}
+		finally {
+		}
 		return httpHeaders;
 	}
 
