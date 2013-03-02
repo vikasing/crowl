@@ -10,6 +10,7 @@ package org.crow.base;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,11 +42,13 @@ public class FeedParser {
 		System.out.println("Parsing URL: "+feedUrl.toString() +" at "+Calendar.getInstance().getTime());
 		InputStream urlInputStream = null;
 		InputStreamReader iStreamReader = null;
+		HttpURLConnection httpURLConnection =null;
 		try {
 			//FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
 			//FeedFetcher fetcher = new HttpURLFeedFetcher(feedInfoCache);
 			SyndFeedInput input = new SyndFeedInput();
-			urlInputStream = feedUrl.openStream();
+			httpURLConnection = (HttpURLConnection)feedUrl.openConnection();
+			urlInputStream = httpURLConnection.getInputStream();
 			iStreamReader = new InputStreamReader(urlInputStream);
 			SyndFeed feed = input.build(iStreamReader);
 			//URLConnection uc = feedUrl.openConnection();
@@ -112,6 +115,7 @@ public class FeedParser {
 			try {
 				iStreamReader.close();
 				urlInputStream.close();
+				httpURLConnection.disconnect();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
