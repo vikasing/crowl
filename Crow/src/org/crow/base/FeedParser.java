@@ -112,7 +112,7 @@ public class FeedParser {
 			try {
 				iStreamReader.close();
 				urlInputStream.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

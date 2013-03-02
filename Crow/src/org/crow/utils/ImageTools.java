@@ -116,7 +116,7 @@ public class ImageTools implements ImageObserver {
 	        if (in != null)
 				try {
 					in.close();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 			}
 		}
