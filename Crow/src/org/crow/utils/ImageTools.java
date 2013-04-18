@@ -12,21 +12,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-import net.sf.jmimemagic.Magic;
-
 import org.imgscalr.Scalr;
 
-import com.sun.corba.se.spi.orbutil.fsm.Input;
-
 import sun.misc.BASE64Encoder;
-import sun.misc.OSEnvironment;
 /**
  * @author viksin
  *

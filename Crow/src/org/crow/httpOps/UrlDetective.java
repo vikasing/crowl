@@ -11,11 +11,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
 
 import org.crow.classes.FeedUrl;
 import org.crow.classes.UrlBase;
-import org.crow.data.DBUtils;
 import org.crow.enums.UrlType;
 
 import com.sun.syndication.feed.synd.SyndFeed;

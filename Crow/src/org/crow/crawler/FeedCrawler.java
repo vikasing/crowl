@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.crow.base.FeedParser;
 import org.crow.classes.FeedEntry;
 
@@ -16,17 +18,19 @@ import org.crow.classes.FeedEntry;
  *
  */
 public class FeedCrawler implements ICrawler {
+    private FeedParser feedParser;
 	
+    public FeedCrawler(){
+    	HttpClient httpClient = new DefaultHttpClient();
+    	feedParser = new FeedParser(httpClient);
+    }
     /* (non-Javadoc)
      * @see org.crow.crawler.ICrawler#crawlSingleUrl(java.net.URL)
      */
     @Override
     public List<FeedEntry> crawlSingleUrl(URL url)
     {
-        FeedParser feedParser = new FeedParser();
-        List<FeedEntry> feedList = feedParser.parser(url);
-        return feedList;
-        
+        return feedParser.parser(url);        
     }
 
     /* (non-Javadoc)
@@ -50,20 +54,20 @@ public class FeedCrawler implements ICrawler {
     @Override
     public ConcurrentHashMap<String, List<FeedEntry>> crawlStringUrls(List<String> urls)
     {
-        ConcurrentHashMap<String, List<FeedEntry>> urlFeedHashMap = new ConcurrentHashMap<String, List<FeedEntry>>();
-        for(String str : urls)
-        {   URL url = null;
-        try {
-            url = new URL(str);
-        }
-        catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-            List <FeedEntry> feedList = crawlSingleUrl(url);
-            urlFeedHashMap.put(str, feedList);
-        }
-        return urlFeedHashMap;
+    	ConcurrentHashMap<String, List<FeedEntry>> urlFeedHashMap = new ConcurrentHashMap<String, List<FeedEntry>>();
+    	for(String str : urls){   
+    		URL url = null;
+    		try {
+    			url = new URL(str);
+    		}
+    		catch (MalformedURLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    		List <FeedEntry> feedList = crawlSingleUrl(url);
+    		urlFeedHashMap.put(str, feedList);
+    	}
+    	return urlFeedHashMap;
     }
 
 }

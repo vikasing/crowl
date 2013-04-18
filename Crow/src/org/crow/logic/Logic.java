@@ -3,7 +3,6 @@
  */
 package org.crow.logic;
 
-import java.net.URL;
 
 /**
  * @author viksin
