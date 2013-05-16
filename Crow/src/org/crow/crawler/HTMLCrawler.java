@@ -1,6 +1,6 @@
 /**
  * 
- */
+ *//*
 package org.crow.crawler;
 
 import java.net.URL;
@@ -9,16 +9,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.crow.classes.FeedEntry;
 
-/**
+*//**
  * @author viksin
  *
- */
+ *//*
 public class HTMLCrawler implements ICrawler
 {
 
-    /* (non-Javadoc)
+     (non-Javadoc)
      * @see org.crow.crawler.ICrawler#crawlSingleUrl(java.net.URL)
-     */
+     
     @Override
     public List<FeedEntry> crawlSingleUrl(URL url)
     {
@@ -26,9 +26,9 @@ public class HTMLCrawler implements ICrawler
         return null;
     }
 
-    /* (non-Javadoc)
+     (non-Javadoc)
      * @see org.crow.crawler.ICrawler#crawlUrls(java.util.List)
-     */
+     
     @Override
     public ConcurrentHashMap<URL, List<FeedEntry>> crawlUrls(List<URL> urls)
     {
@@ -36,9 +36,9 @@ public class HTMLCrawler implements ICrawler
         return null;
     }
 
-    /* (non-Javadoc)
+     (non-Javadoc)
      * @see org.crow.crawler.ICrawler#crawlUrls(java.util.ArrayList)
-     */
+     
     @Override
     public ConcurrentHashMap<String, List<FeedEntry>> crawlStringUrls(
             List<String> urls)
@@ -48,3 +48,4 @@ public class HTMLCrawler implements ICrawler
     }
 
 }
+*/

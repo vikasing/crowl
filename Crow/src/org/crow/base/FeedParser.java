@@ -7,6 +7,7 @@ package org.crow.base;
  * @author viksin
  * This class uses ROME library to parse the feeds.	
  */
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -35,24 +36,24 @@ public class FeedParser {
 		this.httpClient = httpClient;
 	}
 	@SuppressWarnings("unchecked")
-	public ArrayList<FeedEntry> parser(URL feedUrl) {
+	public List<FeedEntry> parser(URL feedUrl) {
 		HtmlUtils htmlUtils = new HtmlUtils();
 		//HttpHeadersAnalysis hha = new HttpHeadersAnalysis();
 		GenUtils genUtils = new GenUtils();
 		List<FeedEntry> feedList = new ArrayList<FeedEntry>();// ;Collections.synchronizedList(new ArrayList<FeedEntry>());
-		final String fURL = feedUrl.toString();
-		System.out.println("Parsing URL: "+fURL +" at "+Calendar.getInstance().getTime());
+		String fURL = feedUrl.toString();
+		System.out.println("Parsing URL: "+fURL +" at "+Calendar.getInstance().getTime() +" Current thread "+Thread.currentThread().getName());
 		HttpGet httpGet = new HttpGet(fURL);
 		
 		InputStream urlInputStream = null;
-		InputStreamReader iStreamReader = null;
+		BufferedReader iStreamReader = null;
 		try {
 			HttpResponse httpResponse = httpClient.execute(httpGet);
 			HttpEntity httpEntity = httpResponse.getEntity();
 			if (httpEntity!=null) {
 				urlInputStream = httpEntity.getContent();
 				SyndFeedInput input = new SyndFeedInput();
-				iStreamReader = new InputStreamReader(urlInputStream);
+				iStreamReader = new BufferedReader(new InputStreamReader(urlInputStream));
 				SyndFeed feed = input.build(iStreamReader);
 				String feedSourceTitle = feed.getTitle();
 				List<SyndEntry> feedEntries = feed.getEntries();
@@ -99,13 +100,17 @@ public class FeedParser {
 		}
 		finally {
 			try {
-				iStreamReader.close();
-				urlInputStream.close();
+				if (iStreamReader!=null) {
+					iStreamReader.close();
+				}
+				if (urlInputStream!=null) {
+					urlInputStream.close();
+				}
 				httpGet.releaseConnection();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return (ArrayList<FeedEntry>) feedList;
+		return feedList;
 	}
 }
