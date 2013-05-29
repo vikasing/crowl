@@ -274,4 +274,21 @@ public class Utils {
 		text = text.replaceAll(" +", " ");
 		return text;
 	}
+	
+	public String timeAgo(long minutes){
+		String hAgo = null;
+		if(minutes<60){
+			hAgo = minutes+" minutes ago";
+		}
+		else if (minutes>=60 && minutes<1440) {
+			hAgo = minutes/60+" hours ago";
+		}
+		else if (minutes>=1440 && minutes<2880){
+			hAgo = "1 day ago";
+		}
+		else if(minutes>=2880){
+			hAgo = minutes/1440 + " days ago";
+		}
+		return hAgo;
+	}
 }

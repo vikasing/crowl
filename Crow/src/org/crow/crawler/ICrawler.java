@@ -17,6 +17,8 @@ public interface ICrawler {
 	public List<FeedEntry> crawlSingleUrl(URL url);
 	public Map<URL, List<FeedEntry>> crawlUrls(List<URL> urls);
 	public Map<String, List<FeedEntry>> crawlStringUrls(List<String> urls);
+    public List<FeedEntry> crawlAndMerge(List<String> urls);
+
 	//public void crawlImages(List<URL>);
 	//public void docCrawler();
 	//public void generalCrawler();

@@ -5,6 +5,7 @@ package org.crow.crawler;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,5 +62,23 @@ public class FeedCrawler implements ICrawler {
 			}
     	}
     	return urlFeedHashMap;
+    }
+    @Override
+    public List<FeedEntry> crawlAndMerge(List<String> urls)
+    {
+    	List<FeedEntry> feedList = new ArrayList<FeedEntry>();
+    	for(String str : urls){   
+    		URL url = null;
+    		try {
+    			url = new URL(str);
+    		}
+    		catch (MalformedURLException e) {
+    			e.printStackTrace();
+    		}
+    		if (url!=null) {
+    			feedList.addAll(crawlSingleUrl(url));
+			}
+    	}
+    	return feedList;
     }
 }

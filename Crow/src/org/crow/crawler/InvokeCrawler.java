@@ -5,7 +5,6 @@ package org.crow.crawler;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.crow.classes.FeedEntry;
 import org.crow.utils.MemoryObjects;
@@ -25,7 +24,7 @@ public class InvokeCrawler implements Runnable{
 	@Override
 	public void run() {
 		ICrawler crawler = new FeedCrawler();
-		Map<String, List<FeedEntry>> feedMap = crawler.crawlStringUrls(Arrays.asList(urlArray));	
-    	MemoryObjects.appendToMemMap("feeds", feedMap);
+		List<FeedEntry> feedList = crawler.crawlAndMerge((Arrays.asList(urlArray)));	
+    	MemoryObjects.appendToMemMap("feeds", feedList);
 	}
 }

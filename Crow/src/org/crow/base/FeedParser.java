@@ -89,7 +89,9 @@ public class FeedParser {
 	/*                if (fe.getCompleteContent()!=null && fe.getCompleteContent().length()<100) {
 						fe.setCompleteContent(htmlUtils.getContentFromURL(se.getLink()));
 					}*/
-	                feedList.add(fe);
+	                if (fe.getFeedEntry().getTitle()!=null) {
+		                feedList.add(fe);
+					}
 	            }
 			}
 			
