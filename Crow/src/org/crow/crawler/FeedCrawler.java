@@ -7,12 +7,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.crow.base.FeedParser;
 import org.crow.classes.FeedEntry;
+import org.crow.utils.MemoryObjects;
 
 /**
  * @author viksin
@@ -20,9 +23,10 @@ import org.crow.classes.FeedEntry;
  */
 public class FeedCrawler implements ICrawler {
     private FeedParser feedParser;
-	
+	private Set<String> badURLSet;
     public FeedCrawler(){
     	feedParser = new FeedParser(new DefaultHttpClient());
+    	badURLSet = new HashSet<String>();
     }
 
     @Override
@@ -30,18 +34,24 @@ public class FeedCrawler implements ICrawler {
     {
         return feedParser.parser(url);        
     }
-
-
+    
     @Override
     public Map<URL, List<FeedEntry>> crawlUrls(List<URL> urls)
     {
         Map<URL, List<FeedEntry>> urlFeedHashMap = new HashMap<URL, List<FeedEntry>>();
         for(URL url : urls)
-        {    if (url!=null) {
-            List <FeedEntry> feedList = crawlSingleUrl(url);
-            urlFeedHashMap.put(url, feedList);
+        {   
+        	if (url!=null) {
+	            List <FeedEntry> feedList = crawlSingleUrl(url);
+	            if (feedList.size()>0) {
+	                urlFeedHashMap.put(url, feedList);
+				}
+	            else {
+					badURLSet.add(url.toString());
+				}
 			}
         }
+        MemoryObjects.addObjectToMemMap("badurls", badURLSet);
         return urlFeedHashMap;
     }
 
@@ -58,9 +68,16 @@ public class FeedCrawler implements ICrawler {
     			e.printStackTrace();
     		}
     		if (url!=null) {
-        		urlFeedHashMap.put(str, crawlSingleUrl(url));
+    			List<FeedEntry> feedList = crawlSingleUrl(url);
+    			if (feedList.size()>0) {
+            		urlFeedHashMap.put(str, feedList);
+				}
+    			else {
+					badURLSet.add(url.toString());
+				}
 			}
     	}
+        MemoryObjects.addObjectToMemMap("badurls", badURLSet);
     	return urlFeedHashMap;
     }
     @Override
@@ -76,9 +93,16 @@ public class FeedCrawler implements ICrawler {
     			e.printStackTrace();
     		}
     		if (url!=null) {
-    			feedList.addAll(crawlSingleUrl(url));
+    			List<FeedEntry> oneFeedList = crawlSingleUrl(url);
+    			if (oneFeedList.size()>0) {
+        			feedList.addAll(oneFeedList);
+				}
+    			else {
+					badURLSet.add(url.toString());
+				}
 			}
     	}
+        MemoryObjects.addObjectToMemMap("badurls", badURLSet);
     	return feedList;
     }
 }

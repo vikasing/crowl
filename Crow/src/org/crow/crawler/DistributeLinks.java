@@ -47,6 +47,7 @@ public class DistributeLinks {
 			try {
 				System.out.println("joining thread "+threads[i].getName());
 				threads[i].join();
+				System.out.println("joined thread "+threads[i].getName());
 			}
 			catch (InterruptedException e) {
 				e.printStackTrace();

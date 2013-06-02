@@ -42,7 +42,7 @@ public class FeedParser {
 		GenUtils genUtils = new GenUtils();
 		List<FeedEntry> feedList = new ArrayList<FeedEntry>();// ;Collections.synchronizedList(new ArrayList<FeedEntry>());
 		String fURL = feedUrl.toString();
-		System.out.println("Parsing URL: "+fURL +" at "+Calendar.getInstance().getTime() +" Current thread "+Thread.currentThread().getName());
+		//System.out.println("Parsing URL: "+fURL +" at "+Calendar.getInstance().getTime() +" Current thread "+Thread.currentThread().getName());
 		HttpGet httpGet = new HttpGet(fURL);
 		
 		InputStream urlInputStream = null;
@@ -97,8 +97,8 @@ public class FeedParser {
 			
 		
 		} catch (Exception ex) {
-			System.out.println("ERROR: " + ex.getMessage()+" in " +fURL);
-			ex.printStackTrace();
+			System.out.println("ERROR: "+fURL);
+			//ex.printStackTrace();
 		}
 		finally {
 			try {

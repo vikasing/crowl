@@ -12,7 +12,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * @author vksing3
+ * @author viksin
  *
  */
 public class PhraseExtracter {
