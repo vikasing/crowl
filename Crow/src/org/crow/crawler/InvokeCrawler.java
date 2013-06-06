@@ -17,15 +17,23 @@ import org.crow.utils.MemoryObjects;
  *
  */
 public class InvokeCrawler implements Runnable{
+	
 	private String[] urlArray;
-	public InvokeCrawler(String[] urlArray) {
+	private ICrawler crawler;
+	public InvokeCrawler(String[] urlArray, ICrawler crawler) {
 		this.urlArray = urlArray;
-		System.out.println(urlArray.length);
+		this.crawler = crawler;
 	}
+	
 	@Override
 	public void run() {
-		ICrawler crawler = new FeedCrawler();
-		Map<String, List<FeedEntry>> feedMap = crawler.crawlStringUrls((Arrays.asList(urlArray)));	
+		if (crawler instanceof FeedCrawler) {
+			Map<String, List<FeedEntry>> feedMap = crawler.crawlStringUrls((Arrays.asList(urlArray)));	
+	    	MemoryObjects.appendToMemMap("feeds", feedMap);
+		}
+		else if (crawler instanceof GenericCrawler) {
+			((GenericCrawler) crawler).getLinkedURLs((Arrays.asList(urlArray)));
+		}
 /*    	@SuppressWarnings("unchecked")
 		Set<String> idsSet = (Set<String>) MemoryObjects.getMemObjects().get("feedids");
     	System.out.println("size of feed map before "+feedMap.size());
@@ -33,6 +41,5 @@ public class InvokeCrawler implements Runnable{
 			feedMap.remove(id);
 		}
     	System.out.println("size of feed map after "+feedMap.size());*/
-    	MemoryObjects.appendToMemMap("feeds", feedMap);
 	}
 }

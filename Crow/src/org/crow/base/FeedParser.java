@@ -42,70 +42,66 @@ public class FeedParser {
 		GenUtils genUtils = new GenUtils();
 		List<FeedEntry> feedList = new ArrayList<FeedEntry>();// ;Collections.synchronizedList(new ArrayList<FeedEntry>());
 		String fURL = feedUrl.toString();
-		//System.out.println("Parsing URL: "+fURL +" at "+Calendar.getInstance().getTime() +" Current thread "+Thread.currentThread().getName());
+		System.out.println("Parsing URL: "+fURL +" at "+Calendar.getInstance().getTime() +" Current thread "+Thread.currentThread().getName());
 		HttpGet httpGet = new HttpGet(fURL);
-		
 		InputStream urlInputStream = null;
 		BufferedReader iStreamReader = null;
 		try {
 			HttpResponse httpResponse = httpClient.execute(httpGet);
 			HttpEntity httpEntity = httpResponse.getEntity();
-			if (httpEntity!=null) {
+			if (httpEntity != null) {
 				urlInputStream = httpEntity.getContent();
 				SyndFeedInput input = new SyndFeedInput();
 				iStreamReader = new BufferedReader(new InputStreamReader(urlInputStream));
 				SyndFeed feed = input.build(iStreamReader);
 				String feedSourceTitle = feed.getTitle();
 				List<SyndEntry> feedEntries = feed.getEntries();
-	            for (SyndEntry se : feedEntries) {
-	                // HttpHeaders httpHeaders = hha.getHttpHeaders(new
-	                // URL(se.getLink().toString()));
-	                FeedEntry fe = new FeedEntry();
-	                StringBuffer sbuff = new StringBuffer();
+				for (SyndEntry se : feedEntries) {
+					// HttpHeaders httpHeaders = hha.getHttpHeaders(new
+					// URL(se.getLink().toString()));
+					FeedEntry fe = new FeedEntry();
+					StringBuffer sbuff = new StringBuffer();
 
-	                fe.setSourceLink(fURL);
-	                fe.setSourceTitle(feedSourceTitle);
-	                fe.setFeedEntry(se);
-	                //fe.setCompleteContent(htmlUtils.getContentFromURL(se.getLink()));
-	                if (se.getContents().size() > 0) {
-	                    Iterator<?> contents = se.getContents().iterator();
-	                    while (contents.hasNext()) {
-	                        SyndContent content = (SyndContent) contents.next();
-	                        sbuff.append(content.getValue());
-	                    }
-	                    fe.setNoHtmlContent(htmlUtils.getCleanTextFromHTML(sbuff.toString()));
-	                    fe.setFeedImageUrls(htmlUtils.getImgUrls(sbuff.toString()));
-	                }
-	                else if (se.getDescription() != null) {
-	                    fe.setFeedImageUrls(htmlUtils.getImgUrls(se.getDescription().getValue()));
-	                    fe.setNoHtmlContent(htmlUtils.getCleanTextFromHTML(se.getDescription().getValue()));
-	                }
-	                if (fe.getNoHtmlContent().length()<300) {
-	                	fe.setNoHtmlContent(htmlUtils.getContentFromURL(se.getLink()));
+					fe.setSourceLink(fURL);
+					fe.setSourceTitle(feedSourceTitle);
+					fe.setFeedEntry(se);
+					//fe.setCompleteContent(htmlUtils.getContentFromURL(se.getLink()));
+					if (se.getContents().size() > 0) {
+						Iterator<?> contents = se.getContents().iterator();
+						while (contents.hasNext()) {
+							SyndContent content = (SyndContent) contents.next();
+							sbuff.append(content.getValue());
+						}
+						fe.setNoHtmlContent(htmlUtils.getCleanTextFromHTML(sbuff.toString()));
+						fe.setFeedImageUrls(htmlUtils.getImgUrls(sbuff.toString()));
+					} else if (se.getDescription() != null) {
+						fe.setFeedImageUrls(htmlUtils.getImgUrls(se.getDescription().getValue()));
+						fe.setNoHtmlContent(htmlUtils.getCleanTextFromHTML(se.getDescription().getValue()));
 					}
-	                // fe.setLastModDateOnServer(httpHeaders.getLastModified());
-	                fe.setFeedGetDateTime(Calendar.getInstance().getTime());
-	                fe.setFeedHashid(genUtils.generateSHAHashId(se.getLink()));
-	/*                if (fe.getCompleteContent()!=null && fe.getCompleteContent().length()<100) {
-						fe.setCompleteContent(htmlUtils.getContentFromURL(se.getLink()));
-					}*/
-	                if (fe.getFeedEntry().getTitle()!=null) {
-		                feedList.add(fe);
+					if (fe.getNoHtmlContent().length() < 300) {
+						fe.setNoHtmlContent(htmlUtils.getContentFromURL(se.getLink()));
 					}
-	            }
+					// fe.setLastModDateOnServer(httpHeaders.getLastModified());
+					fe.setFeedGetDateTime(Calendar.getInstance().getTime());
+					fe.setFeedHashid(genUtils.generateSHAHashId(se.getLink()));
+					/*                if (fe.getCompleteContent()!=null && fe.getCompleteContent().length()<100) {
+											fe.setCompleteContent(htmlUtils.getContentFromURL(se.getLink()));
+										}*/
+					if (fe.getFeedEntry().getTitle() != null) {
+						feedList.add(fe);
+					}
+				}
 			}
-			
-		
+
 		} catch (Exception ex) {
-			System.out.println("ERROR: "+fURL);
-			//ex.printStackTrace();
-		}
-		finally {
+			System.out.println("ERROR: " + fURL);
+			ex.printStackTrace();
+		} finally {
 			try {
-				if (iStreamReader!=null) {
+				if (iStreamReader != null) {
 					iStreamReader.close();
 				}
-				if (urlInputStream!=null) {
+				if (urlInputStream != null) {
 					urlInputStream.close();
 				}
 				httpGet.releaseConnection();

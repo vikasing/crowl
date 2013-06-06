@@ -10,30 +10,29 @@ import java.util.Set;
  * @author viksin
  *
  */
-public class DistributeLinks {
+public class DistributeJobs {
 
 	private Thread[] threads = null;
 	private int numOfTs;
 	
-	public DistributeLinks(int numOfThreads) {
+	public DistributeJobs(int numOfThreads) {
 		this.numOfTs = numOfThreads;
 		threads = new Thread[numOfThreads];
 	}
 
-	public void distributeLinks(Set<String> urlSet) {
+	public void distributeFeedLinks(Set<String> urlSet) {
 		try {
-			String[] urlArray = (urlSet).toArray(new String[urlSet.size()]);
+			String[] urlArray = urlSet.toArray(new String[urlSet.size()]);
 			int numOfUrls = urlArray.length;
 			int partialSize = numOfUrls/numOfTs;
-			//int lastPart = partialSize+numOfUrls-partialSize*numOfTs;
 			for (int i = 0; i < numOfTs; i++) {
 				if (i==numOfTs-1) {
-					threads[i] = new Thread((new InvokeCrawler(Arrays.copyOfRange(urlArray, i*partialSize, numOfUrls-1))));
+					threads[i] = new Thread((new InvokeCrawler(Arrays.copyOfRange(urlArray, i*partialSize, numOfUrls-1), new FeedCrawler())));
 					threads[i].setName("t"+i);
 					threads[i].start();
 				}
 				else {
-					threads[i] = new Thread((new InvokeCrawler(Arrays.copyOfRange(urlArray, i*partialSize, (i+1)*partialSize))));
+					threads[i] = new Thread((new InvokeCrawler(Arrays.copyOfRange(urlArray, i*partialSize, (i+1)*partialSize),new FeedCrawler())));
 					threads[i].setName("t"+i);
 					threads[i].start();
 				}
@@ -42,6 +41,29 @@ public class DistributeLinks {
 			e.printStackTrace();
 		}
 	}
+	
+	public void distributeGenLinks(Set<String> urlSet) {
+		try {
+			String[] urlArray = urlSet.toArray(new String[urlSet.size()]);
+			int numOfUrls = urlArray.length;
+			int partialSize = numOfUrls/numOfTs;
+			for (int i = 0; i < numOfTs; i++) {
+				if (i==numOfTs-1) {
+					threads[i] = new Thread((new InvokeCrawler(Arrays.copyOfRange(urlArray, i*partialSize, numOfUrls-1), new GenericCrawler())));
+					threads[i].setName("t"+i);
+					threads[i].start();
+				}
+				else {
+					threads[i] = new Thread((new InvokeCrawler(Arrays.copyOfRange(urlArray, i*partialSize, (i+1)*partialSize),new GenericCrawler())));
+					threads[i].setName("t"+i);
+					threads[i].start();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void joinThreads(){
 		for (int i = 0; i < threads.length; i++) {
 			try {
