@@ -15,6 +15,7 @@ public class WebDocument
 {
     private URL pageURL;
     private String domain;
+    private String subDomain;
     private String title;
     private Date getDate;
     private String pageContent;
@@ -22,6 +23,8 @@ public class WebDocument
     private String author;
     private List<String> innerLinks;
     private List<String> outerLinks;
+    private boolean isAMainPage; // main page or front page, is a page like www.nytimes.com
+    
     /**
      * @param pageURL the pageURL to set
      */
@@ -51,6 +54,18 @@ public class WebDocument
         return domain;
     }
     /**
+	 * @return the subDomain
+	 */
+	public String getSubDomain() {
+		return subDomain;
+	}
+	/**
+	 * @param subDomain the subDomain to set
+	 */
+	public void setSubDomain(String subDomain) {
+		this.subDomain = subDomain;
+	}
+	/**
      * @param title the title to set
      */
     public void setTitle(String title)
@@ -147,5 +162,17 @@ public class WebDocument
     public List<String> getOuterLinks()
     {
         return outerLinks;
-    }    
+    }
+	/**
+	 * @return the isAMainPage
+	 */
+	public boolean isAMainPage() {
+		return isAMainPage;
+	}
+	/**
+	 * @param isAMainPage the isAMainPage to set
+	 */
+	public void setAMainPage(boolean isAMainPage) {
+		this.isAMainPage = isAMainPage;
+	}    
 }

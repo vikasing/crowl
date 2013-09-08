@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -233,5 +235,32 @@ public class HtmlUtils {
 			e.printStackTrace();
 		}
 		return respCode;
+	}
+	
+	public boolean isAFrontPage(Document doc) {
+		boolean isFPage = false;
+		Elements hrefElements = doc.getElementsByTag("a");
+		double noOfLinks = hrefElements.size();
+		for (Element element : hrefElements) {
+			element.remove();
+		}
+		double ratio = noOfLinks/(double)doc.body().text().length();
+		if (ratio>0.1) {
+			isFPage = true;
+		}
+		return isFPage;
+	}
+	
+	public static String getDomainName(String url) {
+	    URI uri = null;
+	    String domainName =null;
+		try {
+			uri = new URI(url);
+		    String domain = uri.getHost();
+		    domainName = domain.startsWith("www.") ? domain.substring(4) : domain;
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return domainName;
 	}
 }
